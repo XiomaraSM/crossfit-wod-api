@@ -1,4 +1,4 @@
-const recordService = require("../services/recordService");
+const recordService = require("../services/recordServices");
 
 const getRecordForWorkout = (req, res) => {
   const {
