@@ -17,13 +17,13 @@ npm start
 ## Estructura del proyecto
 El proyecto está estructurado en las siguientes carpetas y archivos:
 
-model/: Carpeta que contiene los modelos de Mongoose de tu aplicación.
-controller/: Carpeta que contiene los controladores de tu aplicación.
-routes/: Carpeta que contiene las rutas de tu aplicación.
-index.js: Archivo principal de la aplicación que se encarga de iniciar el servidor y conectar con la base de datos.
-workoutschema.js: Archivo que define el esquema de Mongoose para los workouts.
-workout-routes.js: Archivo que contiene las rutas para la entidad workout.
-db.js: Archivo que se encarga de conectar con la base de datos.
+- model/: Carpeta que contiene los modelos de Mongoose de tu aplicación.
+- controller/: Carpeta que contiene los controladores de tu aplicación.
+- routes/: Carpeta que contiene las rutas de tu aplicación.
+- index.js: Archivo principal de la aplicación que se encarga de iniciar el servidor y conectar con la base de datos.
+- workoutSchema.js: Archivo que define el esquema de Mongoose para los workouts.
+- workoutRroutes.js: Archivo que contiene las rutas para la entidad workout.
+- db.js: Archivo que se encarga de conectar con la base de datos.
 
 
 ## Contribución
