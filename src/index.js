@@ -2,6 +2,7 @@ const express = require("express");
 const apicache = require("apicache");
 const v1WorkoutRouter = require("./v1/routes/workoutRoutes");
 const { swaggerDocs: V1SwaggerDocs } = require("./v1/swagger");
+require ('./database/db')
 
 const app = express();
 const PORT = process.env.PORT || 3000;

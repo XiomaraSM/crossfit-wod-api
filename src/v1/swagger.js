@@ -5,9 +5,46 @@ const swaggerUi = require("swagger-ui-express");
 const options = {
   definition: {
     openapi: "3.0.0",
-    info: { title: "Crossfit WOD API", version: "1.0.0" },
+    info: { 
+      title: "Crossfit WOD API", 
+      version: "1.0.0",
+      description: "API para manejar entrenamientos de Crossfit" 
+    },
+    components: {
+      schemas: {
+        Workout: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+            },
+            mode: {
+              type: "string",
+            },
+            equipment: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            exercises: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            trainerTips: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+          },
+        },
+      },
+    },
   },
-  apis: ["src/v1/routes/workoutRoutes.js", "src/database/Workout.js"],
+  apis: ["src/v1/routes/workoutRoutes.js", "src/database/db.js"],
 };
 
 // Docs en JSON format
@@ -27,3 +64,4 @@ const swaggerDocs = (app, port) => {
 };
 
 module.exports = { swaggerDocs };
+

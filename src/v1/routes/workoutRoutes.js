@@ -1,23 +1,23 @@
 const express = require("express");
 const workoutController = require("../../controllers/workoutController");
-const recordController = require("../../controllers/recordController");
 
 const router = express.Router();
-
 /**
  * @openapi
  * /api/v1/workouts:
  *   get:
+ *     summary: Get all workouts or filter by mode
+ *     description: Returns a list of all workouts or a filtered list by mode
  *     tags:
- *       - Workouts
+ *       - workouts
  *     parameters:
  *       - in: query
  *         name: mode
+ *         description: Filter by workout mode (e.g. 'strength', 'endurance', 'mobility')
  *         schema:
  *           type: string
- *         description: The mode of a workout
  *     responses:
- *       200:
+ *       '200':
  *         description: OK
  *         content:
  *           application/json:
@@ -30,9 +30,34 @@ const router = express.Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: "#/components/schemas/Workout"
- *       5XX:
- *         description: FAILED
+ *                     $ref: '#/components/schemas/Workout'
+ *       '400':
+ *         description: Invalid request parameters
+ *       '500':
+ *         description: Internal server error
+ */
+/**
+ * @openapi
+ * /workouts/{workoutId}:
+ *   get:
+ *     summary: Get a single workout by ID
+ *     description: Returns a single workout by ID.
+ *     parameters:
+ *       - in: path
+ *         name: workoutId
+ *         required: true
+ *         description: ID of the workout to get
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Workout'
+ *       400:
+ *         description: Bad Request
  *         content:
  *           application/json:
  *             schema:
@@ -46,35 +71,7 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
- *                       example: "Some error message"
- */
-
-/**
- * @openapi
- * /api/v1/workouts/{workoutId}:
- *   get:
- *     tags:
- *       - Workouts
- *     parameters:
- *       - in: path
- *         name: workoutId
- *         schema:
- *           type: string
- *         required: true
- *         description: The ID of the workout to retrieve
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: OK
- *                 data:
- *                   $ref: "#/components/schemas/Workout"
+ *                       example: "Parameter ':workoutId' can not be empty"
  *       404:
  *         description: Not Found
  *         content:
@@ -90,9 +87,9 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
- *                       example: "Workout not found"
- *       5XX:
- *         description: FAILED
+ *                       example: "Workout with ID {workoutId} not found"
+ *       500:
+ *         description: Internal Server Error
  *         content:
  *           application/json:
  *             schema:
@@ -106,30 +103,30 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
- *                       example: "Some error message"
  */
 /**
  * @openapi
  * /api/v1/workouts:
  *   post:
+ *     summary: Create a new workout
  *     tags:
  *       - Workouts
  *     requestBody:
- *       description: New workout object
+ *       description: Workout object that needs to be added to the database
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/NewWorkout"
+ *             $ref: '#/components/schemas/Workout'
  *     responses:
- *       200:
- *         description: OK
+ *       '201':
+ *         description: Workout successfully created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Workout"
- *       4XX:
- *         description: Bad Request
+ *               $ref: '#/components/schemas/Workout'
+ *       '400':
+ *         description: Bad request - some required fields are missing
  *         content:
  *           application/json:
  *             schema:
@@ -137,37 +134,58 @@ const router = express.Router();
  *               properties:
  *                 status:
  *                   type: string
- *                   example: "BAD_REQUEST"
- *                 message:
+ *                   example: 'FAILED'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     error:
+ *                       type: string
+ *                       example: "One of the following keys is missing or is empty in request body: 'name', 'mode', 'equipment', 'exercises', 'trainerTips'"
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
  *                   type: string
- *                   example: "Invalid request body"
+ *                   example: 'FAILED'
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     error:
+ *                       type: string
+ *                       example: 'Internal server error'
  */
 /**
  * @openapi
- *   patch:
- *     tags:
- *       - Workouts
+ * /workouts/{workoutId}:
+ *   put:
+ *     summary: Update a workout by ID
+ *     description: Update a workout's details by its ID
  *     parameters:
  *       - in: path
  *         name: workoutId
+ *         description: ID of the workout to update
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: Workout id
- *       - in: body
- *         name: changes
- *         schema:
- *           $ref: "#/components/schemas/WorkoutChanges"
- *         required: true
- *         description: Workout changes object
+ *     requestBody:
+ *       description: New details of the workout to update
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Workout'
  *     responses:
  *       200:
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Workout"
- *       4XX:
+ *               $ref: '#/components/schemas/Workout'
+ *       400:
  *         description: Bad Request
  *         content:
  *           application/json:
@@ -176,45 +194,72 @@ const router = express.Router();
  *               properties:
  *                 status:
  *                   type: string
- *                   example: "BAD_REQUEST"
- *                 message:
+ *                   example: FAILED
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     error:
+ *                       type: string
+ *                       example: One of the following keys is missing or is empty in request body: 'name', 'mode', 'equipment', 'exercises', 'trainerTips'
+ *       404:
+ *         description: Not Found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
  *                   type: string
- *                   example: "Invalid request body"
+ *                   example: FAILED
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     error:
+ *                       type: string
+ *                       example: Workout with ID {workoutId} not found
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: FAILED
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     error:
+ *                       type: string
  */
 /**
  * @openapi
+ * /workouts/{workoutId}:
  *   delete:
- *     tags:
- *       - Workouts
+ *     summary: Deletes a workout by ID
+ *     tags: [Workouts]
  *     parameters:
  *       - in: path
  *         name: workoutId
  *         schema:
  *           type: string
  *         required: true
- *         description: Workout id
+ *         description: ID of the workout to delete
  *     responses:
  *       204:
- *         description: No Content
- *       4XX:
- *         description: Bad Request
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "BAD_REQUEST"
- *                 message:
- *                   type: string
- *                   example: "Invalid request parameters"
+ *         description: The workout was successfully deleted
+ *       400:
+ *         description: Parameter ':workoutId' can not be empty
+ *       404:
+ *         description: Workout with ID {workoutId} not found
+ *       500:
+ *         description: Failed to delete workout
  */
 
 router
   .get("/", workoutController.getAllWorkouts)
   .get("/:workoutId", workoutController.getOneWorkout)
-  .get("/:workoutId/records", recordController.getRecordForWorkout)
   .post("/", workoutController.createNewWorkout)
   .patch("/:workoutId", workoutController.updateOneWorkout)
   .delete("/:workoutId", workoutController.deleteOneWorkout);
