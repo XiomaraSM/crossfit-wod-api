@@ -1,4 +1,4 @@
-const db = require("../database/db");
+const express = require ("express"); 
 const workoutModel = require("../database/models/workoutSchema");
 
 const getAllWorkouts = async (req, res) => {
@@ -31,7 +31,6 @@ const getOneWorkout = async (req, res) => {
       .send({ status: "FAILED", data: { error: error?.message || error } });
   }
 };
-
 const createNewWorkout = async (req, res) => {
   try {
     const { name, mode, equipment, exercises, trainerTips } = req.body;
@@ -59,7 +58,6 @@ const createNewWorkout = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 const updateOneWorkout = async (req, res) => {
   const { id } = req.params;
   const { body } = req;
@@ -91,10 +89,9 @@ const updateOneWorkout = async (req, res) => {
     });
   }
 };
-
 const deleteOneWorkout = async (req, res) => {
   try {
-    const workoutId = req.params.id;
+    const workoutId = req.params.workoutId;
     const deletedWorkout = await workoutModel.findByIdAndDelete(workoutId);
 
     if (!deletedWorkout) {
@@ -104,11 +101,12 @@ const deleteOneWorkout = async (req, res) => {
       return;
     }
 
-    res.status(200).send({ status: "OK", data: deletedWorkout });
+    res.status(200).send({ status: "OK", data: "Workout deleted" });
   } catch (error) {
     res.status(500).send({ status: "FAILED", data: { error: error.message } });
   }
 };
+
 
 module.exports = {
   getAllWorkouts,

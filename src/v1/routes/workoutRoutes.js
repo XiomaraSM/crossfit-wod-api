@@ -2,22 +2,22 @@ const express = require("express");
 const workoutController = require("../../controllers/workoutController");
 
 const router = express.Router();
+
+// swagger workout
 /**
  * @openapi
  * /api/v1/workouts:
  *   get:
- *     summary: Get all workouts or filter by mode
- *     description: Returns a list of all workouts or a filtered list by mode
  *     tags:
- *       - workouts
+ *       - Workouts
  *     parameters:
  *       - in: query
  *         name: mode
- *         description: Filter by workout mode (e.g. 'strength', 'endurance', 'mobility')
  *         schema:
  *           type: string
+ *         description: The mode of a workout
  *     responses:
- *       '200':
+ *       200:
  *         description: OK
  *         content:
  *           application/json:
@@ -30,34 +30,9 @@ const router = express.Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Workout'
- *       '400':
- *         description: Invalid request parameters
- *       '500':
- *         description: Internal server error
- */
-/**
- * @openapi
- * /workouts/{workoutId}:
- *   get:
- *     summary: Get a single workout by ID
- *     description: Returns a single workout by ID.
- *     parameters:
- *       - in: path
- *         name: workoutId
- *         required: true
- *         description: ID of the workout to get
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Workout'
- *       400:
- *         description: Bad Request
+ *                     $ref: "#/components/schemas/Workout"
+ *       5XX:
+ *         description: FAILED
  *         content:
  *           application/json:
  *             schema:
@@ -71,7 +46,37 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
- *                       example: "Parameter ':workoutId' can not be empty"
+ *                       example: "Some error message"
+ */
+
+
+// swagger getOneWorkout
+/**
+ * @openapi
+ * /api/v1/workouts/{workoutId}:
+ *   get:
+ *     tags:
+ *       - Workouts
+ *     parameters:
+ *       - in: path
+ *         name: workoutId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the workout to retrieve
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 data:
+ *                   $ref: "#/components/schemas/Workout"
  *       404:
  *         description: Not Found
  *         content:
@@ -87,9 +92,9 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
- *                       example: "Workout with ID {workoutId} not found"
- *       500:
- *         description: Internal Server Error
+ *                       example: "Workout not found"
+ *       5XX:
+ *         description: FAILED
  *         content:
  *           application/json:
  *             schema:
@@ -103,30 +108,28 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
+ *                       example: "Some error message"
  */
+
+router.get("/:workoutId", workoutController.getOneWorkout);
+
+
+// swagger createNewWorkout
 /**
  * @openapi
- * /api/v1/workouts:
+ * /api/v1/workouts/create:
  *   post:
- *     summary: Create a new workout
  *     tags:
  *       - Workouts
  *     requestBody:
- *       description: Workout object that needs to be added to the database
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Workout'
+ *             $ref: "#/components/schemas/Workout"
  *     responses:
- *       '201':
- *         description: Workout successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Workout'
- *       '400':
- *         description: Bad request - some required fields are missing
+ *       201:
+ *         description: Created
  *         content:
  *           application/json:
  *             schema:
@@ -134,59 +137,11 @@ const router = express.Router();
  *               properties:
  *                 status:
  *                   type: string
- *                   example: 'FAILED'
+ *                   example: CREATED
  *                 data:
- *                   type: object
- *                   properties:
- *                     error:
- *                       type: string
- *                       example: "One of the following keys is missing or is empty in request body: 'name', 'mode', 'equipment', 'exercises', 'trainerTips'"
- *       '500':
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: 'FAILED'
- *                 data:
- *                   type: object
- *                   properties:
- *                     error:
- *                       type: string
- *                       example: 'Internal server error'
- */
-/**
- * @openapi
- * /workouts/{workoutId}:
- *   put:
- *     summary: Update a workout by ID
- *     description: Update a workout's details by its ID
- *     parameters:
- *       - in: path
- *         name: workoutId
- *         description: ID of the workout to update
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       description: New details of the workout to update
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Workout'
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Workout'
- *       400:
- *         description: Bad Request
+ *                   $ref: "#/components/schemas/Workout"
+ *       5XX:
+ *         description: FAILED
  *         content:
  *           application/json:
  *             schema:
@@ -200,7 +155,44 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
- *                       example: One of the following keys is missing or is empty in request body: 'name', 'mode', 'equipment', 'exercises', 'trainerTips'
+ *                       example: "Some error message"
+ */
+
+router.post("/create", workoutController.createNewWorkout);
+
+//swagger updateOneWorkout
+/**
+ * @openapi
+ * /api/v1/workouts/{workoutId}:
+ *   patch:
+ *     tags:
+ *       - Workouts
+ *     parameters:
+ *       - in: path
+ *         name: workoutId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the workout to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/Workout"
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *            
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 data:
+ *                   $ref: "#/components/schemas/Workout"
  *       404:
  *         description: Not Found
  *         content:
@@ -216,9 +208,9 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
- *                       example: Workout with ID {workoutId} not found
- *       500:
- *         description: Internal Server Error
+ *                       example: "Workout not found"
+ *       5XX:
+ *         description: FAILED
  *         content:
  *           application/json:
  *             schema:
@@ -232,35 +224,81 @@ const router = express.Router();
  *                   properties:
  *                     error:
  *                       type: string
+ *                       example: "Some error message"
  */
+
+router.patch("/:workoutId", workoutController.updateOneWorkout);
+
+
+//swagger deleteOneWorkout
 /**
  * @openapi
- * /workouts/{workoutId}:
+ * /api/v1/workouts/{workoutId}:
  *   delete:
- *     summary: Deletes a workout by ID
- *     tags: [Workouts]
+ *     tags:
+ *       - Workouts
  *     parameters:
  *       - in: path
  *         name: workoutId
  *         schema:
  *           type: string
  *         required: true
- *         description: ID of the workout to delete
+ *         description: The ID of the workout to delete
  *     responses:
- *       204:
- *         description: The workout was successfully deleted
- *       400:
- *         description: Parameter ':workoutId' can not be empty
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 data:
+ *                   type: string
+ *                   example: "Workout deleted"
  *       404:
- *         description: Workout with ID {workoutId} not found
- *       500:
- *         description: Failed to delete workout
+ *         description: Not Found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: FAILED
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     error:
+ *                       type: string
+ *                       example: "Workout not found"
+ *       5XX:
+ *         description: FAILED
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: FAILED
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     error:
+ *                       type: string
+ *                       example: "Some error message"
  */
+
+router.delete("/:workoutId", workoutController.deleteOneWorkout);
+
 
 router
   .get("/", workoutController.getAllWorkouts)
   .get("/:workoutId", workoutController.getOneWorkout)
-  .post("/", workoutController.createNewWorkout)
+  .post("/create", workoutController.createNewWorkout)
   .patch("/:workoutId", workoutController.updateOneWorkout)
   .delete("/:workoutId", workoutController.deleteOneWorkout);
 

@@ -1,5 +1,6 @@
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const path = require("path");
 
 // Metadata info about our API
 const options = {
@@ -10,6 +11,7 @@ const options = {
       version: "1.0.0",
       description: "API para manejar entrenamientos de Crossfit" 
     },
+
     components: {
       schemas: {
         Workout: {
@@ -40,11 +42,18 @@ const options = {
               },
             },
           },
+          example: {
+            name: "Ejemplo de rutina",
+            mode: "cardio",
+            equipment: ["pesas", "bicicleta estática"],
+            exercises: ["sentadillas", "flexiones", "abdominales"],
+            trainerTips: ["Mantener la postura", "Hidratarse durante el ejercicio"],
+          }
         },
       },
     },
   },
-  apis: ["src/v1/routes/workoutRoutes.js", "src/database/db.js"],
+  apis: [`${path.join(__dirname, "./routes/workoutRoutes.js")}`],
 };
 
 // Docs en JSON format
