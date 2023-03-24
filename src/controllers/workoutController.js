@@ -11,26 +11,16 @@ const getAllWorkouts = async (req, res) => {
 };
 
 const getOneWorkout = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const workout = await workoutModel.findById(id);
-
-    if (!workout) {
-      res.status(404).send({
-        status: "FAILED",
-        data: { error: `Workout with id ${id} not found` },
-      });
-      return;
-    }
-
-    res.status(200).send({ status: "OK", data: workout });
-  } catch (error) {
-    res
-      .status(error?.status || 500)
-      .send({ status: "FAILED", data: { error: error?.message || error } });
+    const workout = await workoutModel.findOne(req.params.id);
+    res.json(workout);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("error encontrando workout")
   }
 };
+
+
 const createNewWorkout = async (req, res) => {
   try {
     const { name, mode, equipment, exercises, trainerTips } = req.body;
@@ -58,37 +48,19 @@ const createNewWorkout = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-const updateOneWorkout = async (req, res) => {
-  const { id } = req.params;
-  const { body } = req;
 
-  try {
-    const updatedWorkout = await workoutModel.findByIdAndUpdate(id, body, {
-      new: true,
-    });
-
-    if (!updatedWorkout) {
-      return res.status(404).send({
-        status: "FAILED",
-        data: {
-          error: `Workout with id ${id} not found`,
-        },
-      });
-    }
-
-    res.status(200).send({
-      status: "OK",
-      data: updatedWorkout,
-    });
-  } catch (error) {
-    res.status(500).send({
-      status: "FAILED",
-      data: {
-        error: error.message || "Error updating the workout",
-      },
-    });
+const updateOneWorkout = async (req, res) =>{
+  try{
+    const workout = await workoutModel.findOneAndUpdate(
+      {workoutId: req.params.id}, req.body, {new:true}
+    );
+    res.json(workout);
+  }catch(err){
+    console.log(err);
+    res.status(500).send("error al actualizar workout")
   }
 };
+
 const deleteOneWorkout = async (req, res) => {
   try {
     const workoutId = req.params.workoutId;
