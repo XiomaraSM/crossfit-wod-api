@@ -11,5 +11,11 @@
       "src": "/(.*)",
       "dest": "/index.js"
     }
-  ]
+  ],
+  "rewrites": [
+    {
+      "source": "/api/v1/docs",
+      "destination": "/v1/swagger-ui/index.html?url=/v1/docs.json"
+    }
+  ] 
 }
