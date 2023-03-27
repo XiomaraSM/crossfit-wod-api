@@ -1,33 +1,15 @@
 {
-  "version": 2,
-  "builds": [
+  "version":2,
+  "builds":[
     {
-      "src": "index.js",
-      "use": "@vercel/node",
-      "env": {
-        "NODE_ENV": "production"
-      },
-      "build": {
-        "env": {
-          "CI": "1"
-        },
-        "command": "npm install && npm run build"
-      },
-      "output": {
-        "clean": true
-      }
+      "src": "./index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/v1/workouts",
-      "dest": "/index.js"
+      "src":"/(.*)",
+      "dest": "/"
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/v1/docs",
-      "destination": "/v1/swagger-ui/index.html?url=/v1/docs.json"
-    }
-  ] 
+  ]
 }
