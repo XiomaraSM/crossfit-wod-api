@@ -1,7 +1,7 @@
 const express = require("express");
 const apicache = require("apicache");
-const v1WorkoutRouter = require("./v1/routes/workoutRoutes");
-const { swaggerDocs: V1SwaggerDocs } = require("./v1/swagger");
+const v1WorkoutRouter = require("./src/v1/routes/workoutRoutes");
+const { swaggerDocs: V1SwaggerDocs } = require("./src/v1/swagger");
 const { default: mongoose } = require("mongoose");
 require ("dotenv").config();
 
